@@ -102,8 +102,8 @@ class ControlActivity : AppCompatActivity() {
                 write(parseColorCmd(seekBar.progress))
             }
         })
-        mBtnOn = findViewById(R.id.btn_on) as Button
-        mBtnOff = findViewById(R.id.btn_off) as Button
+        mBtnOn = findViewById<Button>(R.id.btn_on)
+        mBtnOff = findViewById<Button>(R.id.btn_off)
         mBtnOn!!.setOnClickListener { write(parseSwitch(true)) }
         mBtnOff!!.setOnClickListener { write(parseSwitch(false)) }
         connect()
@@ -171,17 +171,25 @@ class ControlActivity : AppCompatActivity() {
     }
 
     private fun write(cmd: String) {
-        if (mBos != null && mSocket!!.isConnected) {
+        Thread(Runnable {
             try {
-                mBos!!.write(cmd.toByteArray())
-                mBos!!.flush()
+                if (mBos != null && mSocket!!.isConnected) {
+                    try {
+                        mBos!!.write(cmd.toByteArray())
+                        mBos!!.flush()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                } else {
+                    Log.d(TAG, "mBos = null or mSocket is closed")
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
+                mHandler.sendEmptyMessage(MSG_CONNECT_FAILURE)
             }
+        }).start()
 
-        } else {
-            Log.d(TAG, "mBos = null or mSocket is closed")
-        }
     }
 
     companion object {
