@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import kotlinx.android.synthetic.main.main_activity.*
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
@@ -68,7 +69,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        val wm = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        setSupportActionBar(toolbar)
+        val wm = getApplicationContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
         val lock = wm.createMulticastLock("test")
         lock.run {
             acquire()
